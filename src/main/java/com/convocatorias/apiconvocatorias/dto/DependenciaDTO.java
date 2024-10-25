@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class CargoDTO {
-    private Long id;
-    private String nombreCargo;
-    private String requisitosEstudios;
-    private String requisitosExperiencia;
+@AllArgsConstructor
+public class DependenciaDTO {
+    private long id;
+    private String nombreDependencia;
 }

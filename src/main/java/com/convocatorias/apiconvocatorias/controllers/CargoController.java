@@ -2,45 +2,81 @@ package com.convocatorias.apiconvocatorias.controllers;
 
 import com.convocatorias.apiconvocatorias.dto.CargoDTO;
 import com.convocatorias.apiconvocatorias.services.CargoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cargos")
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class CargoController {
 
-    @Autowired
-    private CargoService cargoService;
+    private static final String ERROR_SERVER_MESSAGE = "Error interno del servidor";
+    private static final String NOT_FOUND_MESSAGE = "Cargo no encontrado con el ID: ";
 
-    @GetMapping
-    public List<CargoDTO> getAllCargos() {
-        return cargoService.getAllCargos();
+    private final CargoService cargoService;
+
+    @GetMapping(value = "cargos")
+    public ResponseEntity<Object> getAllCargos() {
+        try {
+            List<CargoDTO> cargos = cargoService.getAllCargos();
+            return ResponseEntity.ok(cargos);
+        } catch (DataAccessException ex) {
+            return ResponseEntity.status(500).body(ERROR_SERVER_MESSAGE);
+        }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CargoDTO> getCargoById(@PathVariable Long id) {
-        return cargoService.getCargoById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping(value = "cargos/{id}")
+    public ResponseEntity<Object> getCargoById(@PathVariable Long id) {
+        try {
+            CargoDTO cargo = cargoService.getCargoById(id);
+
+            if (cargo == null) {
+                return ResponseEntity.status(404).body(NOT_FOUND_MESSAGE + id);
+            }
+
+            return ResponseEntity.ok(cargo);
+        } catch (DataAccessException err) {
+            return ResponseEntity.status(500).body(ERROR_SERVER_MESSAGE);
+        }
     }
 
-    @PostMapping
-    public CargoDTO createCargo(@RequestBody CargoDTO cargoDTO) {
-        return cargoService.createCargo(cargoDTO);
+    @PostMapping(value = "cargos")
+    public ResponseEntity<Object> createCargo(@RequestBody CargoDTO cargoDTO) {
+        try {
+            CargoDTO createdCargo = cargoService.createCargo(cargoDTO);
+            return ResponseEntity.status(201).body(createdCargo);
+        } catch (DataAccessException ex) {
+            return ResponseEntity.status(500).body(ERROR_SERVER_MESSAGE);
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CargoDTO> updateCargo(@PathVariable Long id, @RequestBody CargoDTO cargoDTO) {
-        return ResponseEntity.ok(cargoService.updateCargo(id, cargoDTO));
+    @PutMapping(value = "cargos/{id}")
+    public ResponseEntity<Object> updateCargo(@PathVariable Long id, @RequestBody CargoDTO cargoDTO) {
+        try {
+            if (!cargoService.existsById(id)) {
+                return ResponseEntity.status(404).body(NOT_FOUND_MESSAGE + id);
+            }
+            CargoDTO updatedCargo = cargoService.updateCargo(id, cargoDTO);
+            return ResponseEntity.ok(updatedCargo);
+        } catch (DataAccessException ex) {
+            return ResponseEntity.status(500).body(ERROR_SERVER_MESSAGE);
+        }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCargo(@PathVariable Long id) {
-        cargoService.deleteCargo(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping(value = "cargos/{id}")
+    public ResponseEntity<Object> deleteCargo(@PathVariable Long id) {
+        try {
+            if (!cargoService.existsById(id)) {
+                return ResponseEntity.status(404).body(NOT_FOUND_MESSAGE + id);
+            }
+            cargoService.deleteCargo(id);
+            return ResponseEntity.noContent().build();
+        } catch (DataAccessException ex) {
+            return ResponseEntity.status(500).body(ERROR_SERVER_MESSAGE);
+        }
     }
-
 }

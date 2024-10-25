@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity // Indica que esta clase es una entidad JPA
 @Table(name = "aplicante") // Nombre de la tabla en la base de datos
 @Data // Genera automáticamente los getters, setters, toString, hashCode y equals
 @NoArgsConstructor // Genera un constructor sin argumentos
