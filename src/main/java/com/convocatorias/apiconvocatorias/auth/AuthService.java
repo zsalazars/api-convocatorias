@@ -1,7 +1,7 @@
 package com.convocatorias.apiconvocatorias.auth;
 
 import com.convocatorias.apiconvocatorias.jwt.JwtService;
-import com.convocatorias.apiconvocatorias.models.Rol;
+import com.convocatorias.apiconvocatorias.models.enums.Rol;
 import com.convocatorias.apiconvocatorias.models.Usuario;
 import com.convocatorias.apiconvocatorias.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;

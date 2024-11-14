@@ -6,8 +6,9 @@ import java.util.List;
 
 public interface SolicitudService {
     List<SolicitudDTO> getAllSolicitudes();
-    SolicitudDTO getSolicitudId(Long id);
+    SolicitudDTO getSolicitudById(Long id);
     SolicitudDTO createSolicitud(SolicitudDTO solicitudDTO);
     SolicitudDTO updateSolicitud(Long id, SolicitudDTO solicitudDTO);
     void deleteSolicitud(Long id);
+    boolean existsById(Long id);
 }

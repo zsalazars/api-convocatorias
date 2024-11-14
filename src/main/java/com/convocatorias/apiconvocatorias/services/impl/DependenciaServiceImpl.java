@@ -1,6 +1,7 @@
 package com.convocatorias.apiconvocatorias.services.impl;
 
 import com.convocatorias.apiconvocatorias.dto.DependenciaDTO;
+import com.convocatorias.apiconvocatorias.mappers.DependenciaMapper;
 import com.convocatorias.apiconvocatorias.models.Dependencia;
 import com.convocatorias.apiconvocatorias.repositories.DependenciaRepository;
 import com.convocatorias.apiconvocatorias.services.DependenciaService;
@@ -14,11 +15,12 @@ import java.util.List;
 public class DependenciaServiceImpl implements DependenciaService {
 
     private final DependenciaRepository dependenciaRepository;
+    private final DependenciaMapper dependenciaMapper;
 
     @Override
     public List<DependenciaDTO> getAllDependencias() {
         return dependenciaRepository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(dependenciaMapper::convertToDTO)
                 .toList();
     }
 
@@ -26,22 +28,22 @@ public class DependenciaServiceImpl implements DependenciaService {
     public DependenciaDTO getDependenciaById(Long id) {
         Dependencia dependencia = dependenciaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Dependencia no encontrada"));
-        return convertToDTO(dependencia);
+        return dependenciaMapper.convertToDTO(dependencia);
     }
 
     @Override
     public DependenciaDTO createDependencia(DependenciaDTO dependenciaDTO) {
-        Dependencia dependencia = convertToEntity(dependenciaDTO);
+        Dependencia dependencia = dependenciaMapper.convertToEntity(dependenciaDTO);
         Dependencia savedDependencia = dependenciaRepository.save(dependencia);
-        return convertToDTO(savedDependencia);
+        return dependenciaMapper.convertToDTO(savedDependencia);
     }
 
     @Override
     public DependenciaDTO updateDependencia(Long id, DependenciaDTO dependenciaDTO) {
-        Dependencia dependencia = convertToEntity(dependenciaDTO);
+        Dependencia dependencia = dependenciaMapper.convertToEntity(dependenciaDTO);
         dependencia.setId(id);
         Dependencia updatedDependencia = dependenciaRepository.save(dependencia);
-        return convertToDTO(updatedDependencia);
+        return dependenciaMapper.convertToDTO(updatedDependencia);
     }
 
     @Override
@@ -49,16 +51,4 @@ public class DependenciaServiceImpl implements DependenciaService {
         return dependenciaRepository.existsById(id);
     }
 
-    private DependenciaDTO convertToDTO(Dependencia dependencia) {
-        DependenciaDTO dependenciaDTO = new DependenciaDTO();
-        dependenciaDTO.setId(dependencia.getId());
-        dependenciaDTO.setNombreDependencia(dependencia.getNombreDependencia());
-        return dependenciaDTO;
-    }
-
-    private Dependencia convertToEntity(DependenciaDTO dependenciaDTO) {
-        Dependencia dependencia = new Dependencia();
-        dependencia.setNombreDependencia(dependenciaDTO.getNombreDependencia());
-        return dependencia;
-    }
 }

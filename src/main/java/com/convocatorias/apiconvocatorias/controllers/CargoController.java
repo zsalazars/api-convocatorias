@@ -57,11 +57,11 @@ public class CargoController {
     @PutMapping(value = "cargos/{id}")
     public ResponseEntity<Object> updateCargo(@PathVariable Long id, @RequestBody CargoDTO cargoDTO) {
         try {
-            if (!cargoService.existsById(id)) {
-                return ResponseEntity.status(404).body(NOT_FOUND_MESSAGE + id);
+            if (cargoService.existsById(id)) {
+                CargoDTO updatedCargo = cargoService.updateCargo(id, cargoDTO);
+                return ResponseEntity.ok(updatedCargo);
             }
-            CargoDTO updatedCargo = cargoService.updateCargo(id, cargoDTO);
-            return ResponseEntity.ok(updatedCargo);
+            return ResponseEntity.status(404).body(NOT_FOUND_MESSAGE + id);
         } catch (DataAccessException ex) {
             return ResponseEntity.status(500).body(ERROR_SERVER_MESSAGE);
         }
@@ -70,11 +70,11 @@ public class CargoController {
     @DeleteMapping(value = "cargos/{id}")
     public ResponseEntity<Object> deleteCargo(@PathVariable Long id) {
         try {
-            if (!cargoService.existsById(id)) {
-                return ResponseEntity.status(404).body(NOT_FOUND_MESSAGE + id);
+            if (cargoService.existsById(id)) {
+                cargoService.deleteCargo(id);
+                return ResponseEntity.noContent().build();
             }
-            cargoService.deleteCargo(id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.status(404).body(NOT_FOUND_MESSAGE + id);
         } catch (DataAccessException ex) {
             return ResponseEntity.status(500).body(ERROR_SERVER_MESSAGE);
         }

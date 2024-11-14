@@ -1,6 +1,8 @@
 package com.convocatorias.apiconvocatorias.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +12,7 @@ import java.util.List;
 @Table(name = "dependencia")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Dependencia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,5 +22,6 @@ public class Dependencia {
     private String nombreDependencia;
 
     @OneToMany(mappedBy = "dependencia")
+    @JsonIgnore
     private List<Solicitud> solicitudes;
 }

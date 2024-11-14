@@ -1,7 +1,12 @@
 package com.convocatorias.apiconvocatorias.services.impl;
 
 import com.convocatorias.apiconvocatorias.dto.SolicitudDTO;
+import com.convocatorias.apiconvocatorias.mappers.SolicitudMapper;
+import com.convocatorias.apiconvocatorias.models.Cargo;
+import com.convocatorias.apiconvocatorias.models.Dependencia;
 import com.convocatorias.apiconvocatorias.models.Solicitud;
+import com.convocatorias.apiconvocatorias.repositories.CargoRepository;
+import com.convocatorias.apiconvocatorias.repositories.DependenciaRepository;
 import com.convocatorias.apiconvocatorias.repositories.SolicitudRepository;
 import com.convocatorias.apiconvocatorias.services.SolicitudService;
 import lombok.RequiredArgsConstructor;
@@ -14,34 +19,53 @@ import java.util.List;
 public class SolicitudServiceImpl implements SolicitudService {
 
     private final SolicitudRepository solicitudRepository;
+    private final CargoRepository cargoRepository;
+    private final DependenciaRepository dependenciaRepository;
+
+    private final SolicitudMapper solicitudMapper;
 
     @Override
     public List<SolicitudDTO> getAllSolicitudes() {
         return solicitudRepository.findAll().stream()
-                .map(this::convertToDTO)
+                .map(solicitudMapper::convertToDTO)
                 .toList();
     }
 
     @Override
-    public SolicitudDTO getSolicitudId(Long id) {
+    public SolicitudDTO getSolicitudById(Long id) {
         Solicitud solicitud = solicitudRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
-        return convertToDTO(solicitud);
+        return solicitudMapper.convertToDTO(solicitud);
     }
 
     @Override
     public SolicitudDTO createSolicitud(SolicitudDTO solicitudDTO) {
-        Solicitud solicitud = convertToEntity(solicitudDTO);
+        // Recuperar la dependencia existente
+        Dependencia dependencia = dependenciaRepository.findById(solicitudDTO.getDependencia().getId())
+                .orElseThrow(() -> new RuntimeException("Dependencia no encontrada"));
+
+        // Recuperar el cargo existente
+        Cargo cargo = cargoRepository.findById(solicitudDTO.getCargo().getId())
+                .orElseThrow(() -> new RuntimeException("Cargo no encontrado"));
+
+        // Convertir DTO a entidad
+        Solicitud solicitud = solicitudMapper.convertToEntity(solicitudDTO);
+
+        // Asignar la dependencia y el cargo recuperados a la solicitud
+        solicitud.setDependencia(dependencia);
+        solicitud.setCargo(cargo);
+
+        // Guardar la solicitud
         Solicitud savedSolicitud = solicitudRepository.save(solicitud);
-        return convertToDTO(savedSolicitud);
+        return solicitudMapper.convertToDTO(savedSolicitud);
     }
 
     @Override
     public SolicitudDTO updateSolicitud(Long id, SolicitudDTO solicitudDTO) {
-        Solicitud solicitud = convertToEntity(solicitudDTO);
+        Solicitud solicitud = solicitudMapper.convertToEntity(solicitudDTO);
         solicitud.setId(id);
-        Solicitud updateSolicitud = solicitudRepository.save(solicitud);
-        return convertToDTO(updateSolicitud);
+        Solicitud updatedSolicitud = solicitudRepository.save(solicitud);
+        return solicitudMapper.convertToDTO(updatedSolicitud);
     }
 
     @Override
@@ -49,28 +73,7 @@ public class SolicitudServiceImpl implements SolicitudService {
         solicitudRepository.deleteById(id);
     }
 
-    private SolicitudDTO convertToDTO(Solicitud solicitud) {
-        SolicitudDTO solicitudDTO = new SolicitudDTO();
-        solicitudDTO.setId(solicitud.getId());
-        solicitudDTO.setDocumento(solicitud.getDocumento());
-        solicitudDTO.setProveido(solicitud.getProveedor());
-        solicitudDTO.setFechaSolicitud(solicitud.getFechaSolicitud());
-        solicitudDTO.setEstado(solicitud.getEstado());
-        solicitudDTO.setCargo(solicitud.getCargo());
-        solicitudDTO.setDependencia(solicitud.getDependencia());
-        return solicitudDTO;
-    }
-
-    private Solicitud convertToEntity(SolicitudDTO solicitudDTO) {
-        Solicitud solicitud = new Solicitud();
-        solicitud.setId(solicitudDTO.getId());
-        solicitud.setDocumento(solicitudDTO.getDocumento());
-        solicitud.setProveedor(solicitudDTO.getProveido());
-        solicitud.setFechaSolicitud(solicitudDTO.getFechaSolicitud());
-        solicitud.setEstado(solicitudDTO.getEstado());
-        solicitud.setCargo(solicitudDTO.getCargo());
-        solicitud.setDependencia(solicitudDTO.getDependencia());
-        return solicitud;
-    }
+    @Override
+    public boolean existsById(Long id) { return solicitudRepository.existsById(id); }
 
 }

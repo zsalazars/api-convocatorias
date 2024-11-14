@@ -2,17 +2,14 @@ package com.convocatorias.apiconvocatorias.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "solicitud")
 @Data
-@Builder // Permite construir instancias usando el patrón Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Solicitud {
@@ -20,19 +17,11 @@ public class Solicitud {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String documento;
-
-    @ManyToOne
-    @JoinColumn(name = "dependencia_id", nullable = false)
-    private Dependencia dependencia;
+    @Column(name = "nombre_documento", nullable = false)
+    private String nombreDocumento;
 
     @Column(nullable = false)
-    private String proveedor;
-
-    @ManyToOne
-    @JoinColumn(name = "cargo_id", nullable = false)
-    private Cargo cargo;
+    private String proveido;
 
     @Column(name = "fecha_solicitud", nullable = false)
     private LocalDate fechaSolicitud;
@@ -40,6 +29,14 @@ public class Solicitud {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status estado = Status.NUEVO;
+
+    @ManyToOne
+    @JoinColumn(name = "dependencia_id", nullable = false)
+    private Dependencia dependencia;
+
+    @ManyToOne
+    @JoinColumn(name = "cargo_id", nullable = false)
+    private Cargo cargo;
 
     @Column(name = "fecha_creacion", updatable = false)
     private LocalDateTime fechaCre;
@@ -58,7 +55,6 @@ public class Solicitud {
         fechaAct = LocalDateTime.now();
     }
 
-    // Enum para el estado
     public enum Status {
         REINGRESO,
         NUEVO

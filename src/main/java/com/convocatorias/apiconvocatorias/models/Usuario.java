@@ -1,5 +1,6 @@
 package com.convocatorias.apiconvocatorias.models;
 
+import com.convocatorias.apiconvocatorias.models.enums.Rol;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -57,11 +57,11 @@ public class DependenciaController {
     @PutMapping(value = "dependencias/{id}")
     public ResponseEntity<Object> updateDependencia(@PathVariable Long id, @RequestBody DependenciaDTO dependenciaDTO) {
         try {
-            if (!dependenciaService.existsById(id)) {
-                return ResponseEntity.status(404).body(NOT_FOUND_MESSAGE + id);
+            if (dependenciaService.existsById(id)) {
+                DependenciaDTO updatedDependencia = dependenciaService.updateDependencia(id, dependenciaDTO);
+                return ResponseEntity.ok(updatedDependencia);
             }
-            DependenciaDTO updatedDependencia = dependenciaService.updateDependencia(id, dependenciaDTO);
-            return ResponseEntity.ok(updatedDependencia);
+            return ResponseEntity.status(404).body(NOT_FOUND_MESSAGE + id);
         } catch (DataAccessException ex) {
             return ResponseEntity.status(500).body(ERROR_SERVER_MESSAGE);
         }

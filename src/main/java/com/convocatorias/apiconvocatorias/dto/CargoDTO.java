@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -12,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class CargoDTO {
     private Long id;
     private String nombreCargo;
-    private String requisitosEstudios;
-    private String requisitosExperiencia;
+    private List<String> requisitosEstudios;
+    private List<String> requisitosExperiencia;
 }

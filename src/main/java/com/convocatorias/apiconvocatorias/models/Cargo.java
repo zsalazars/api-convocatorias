@@ -1,9 +1,11 @@
 package com.convocatorias.apiconvocatorias.models;
 
+import com.convocatorias.apiconvocatorias.utils.StringListConverter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +15,7 @@ import java.util.List;
 @Table(name = "cargo")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Cargo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,14 +26,15 @@ public class Cargo {
     @Column(name = "nombre_cargo", nullable = false)
     private String nombreCargo;
 
-    @Size(max = 255, message = "Los requisitos de estudios no pueden tener más de 255 caracteres")
-    @Column(name = "requisitos_estudios")
-    private String requisitosEstudios;
+    @Convert(converter = StringListConverter.class)
+    @Column(name = "requisitos_estudios", columnDefinition = "text")
+    private List<String> requisitosEstudios;
 
-    @Size(max = 255, message = "Los requisitos de experiencia no pueden tener más de 255 caracteres")
-    @Column(name = "requisitos_experiencia")
-    private String requisitosExperiencia;
+    @Convert(converter = StringListConverter.class)
+    @Column(name = "requisitos_experiencia", columnDefinition = "text")
+    private List<String> requisitosExperiencia;
 
     @OneToMany(mappedBy = "cargo")
+    @JsonIgnore
     private List<Solicitud> solicitudes;
 }
