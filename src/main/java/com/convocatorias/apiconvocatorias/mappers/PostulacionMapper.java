@@ -26,8 +26,18 @@ public class PostulacionMapper {
         postulacionDTO.setPuntuacion(postulacion.getPuntuacion());
         postulacionDTO.setEsApto(postulacion.isEsApto());
         postulacionDTO.setConvocatoria(convocatoriaMapper.convertToDTO(postulacion.getConvocatoria()));
+        /*
         postulacionDTO.setCalificacionDocumentos(calificacionDocumentosMapper.convertToDTO(postulacion.getCalificacionDocumentos()));
         postulacionDTO.setCalificacionRequisitos(calificacionRequisitosMapper.convertToDTO(postulacion.getCalificacionRequisitos()));
+        */
+
+        if (postulacion.getCalificacionDocumentos() != null) {
+            postulacionDTO.setCalificacionDocumentos(calificacionDocumentosMapper.convertToDTO(postulacion.getCalificacionDocumentos()));
+        }
+
+        if (postulacion.getCalificacionRequisitos() != null) {
+            postulacionDTO.setCalificacionRequisitos(calificacionRequisitosMapper.convertToDTO(postulacion.getCalificacionRequisitos()));
+        }
 
         return postulacionDTO;
     }
@@ -46,8 +56,14 @@ public class PostulacionMapper {
         postulacion.setPuntuacion(postulacionDTO.getPuntuacion());
         postulacion.setEsApto(postulacionDTO.isEsApto());
         postulacion.setConvocatoria(convocatoriaMapper.convertToEntity(postulacionDTO.getConvocatoria()));
-        postulacion.setCalificacionDocumentos(calificacionDocumentosMapper.convertToEntity(postulacionDTO.getCalificacionDocumentos()));
-        postulacion.setCalificacionRequisitos(calificacionRequisitosMapper.convertToEntity(postulacionDTO.getCalificacionRequisitos()));
+
+        if (postulacionDTO.getCalificacionDocumentos() != null) {
+            postulacion.setCalificacionDocumentos(calificacionDocumentosMapper.convertToEntity(postulacionDTO.getCalificacionDocumentos()));
+        }
+
+        if (postulacionDTO.getCalificacionRequisitos() != null) {
+            postulacion.setCalificacionRequisitos(calificacionRequisitosMapper.convertToEntity(postulacionDTO.getCalificacionRequisitos()));
+        }
 
         return postulacion;
     }

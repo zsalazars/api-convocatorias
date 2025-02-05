@@ -57,11 +57,10 @@ public class PostulacionController {
     }
 
     @PostMapping(
-            value = "postulaciones/{postulacionId}",
+            value = "postulaciones",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
     public ResponseEntity<Object> createPostulacion(
-            @PathVariable Long postulacionId,
             @RequestParam("model") String model,
             @RequestParam(value = "file", required = false) MultipartFile file) throws JsonProcessingException {
 

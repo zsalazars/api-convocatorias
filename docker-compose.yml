@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://db_apiconvocatorias:5432/convocatorias_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: sergio123
+      JWT_SECRET: 586E3272357538782F4428472B4B6250655368566B5970337333676397924
+      HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+    restart: always
+    depends_on:
+      db_apiconvocatorias:
+        condition: service_healthy
+
+  db_apiconvocatorias:
+    image: postgres:latest
+    container_name: db_apiconvocatorias
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: convocatorias_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: sergio123
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
